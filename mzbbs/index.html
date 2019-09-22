@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <!-- 启用360浏览器的极速模式(webkit) -->
+    <meta name="renderer" content="webkit">
+    <!-- 微软的老式浏览器 -->
+    <meta name="MobileOptimized" content="320">
+    <!-- 关键字描述 -->
+    <title>帽子社区</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/layui/css/layui.css" />
+    <!--[if IE]>
+    <style type="text/css">
+        .top .top-title {background: transparent}
+    </style>
+    <![endif]-->
+    <!--[if lt IE 9]>
+    <script src="http://cdn.bootcss.com/html5shiv/3.7/html5shiv.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--[if lte IE 8]>
+    <script src="http://cdn.bootcss.com/selectivizr/1.0.2/selectivizr.js"></script>
+    <![endif]-->
+        <!-- <link rel="stylesheet" type="text/css" href=" //www.layuicdn.com/layui-v2.5.5/css/layui.css" /> -->
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <style type="text/css">
+        /*p img {*/
+        /*    max-width:30%;*/
+        /*   max-height: 30%;*/
+        /*}*/
+
+    </style>
+
+</head>
+<body>
+<div id="top"></div>
+
+<div class="layui-fluid  " style="max-width:1170px">
+    <div style="height: 30px"></div>
+    <div class="layui-col-xs12 layui-col-md12">
+        <div class="layui-carousel" id="banner">
+        </div>
+    </div>
+        <div class="layui-col-xs12 layui-col-md8">
+
+            <div id="demo"   class="layui-card"></div>
+        </div>
+    <div class="layui-col-xs12 layui-col-md4 ">
+        <div id="right"   class="layui-card"></div>
+<!--        <div style="position: absolute;overflow: auto"><div  style="position: fixed;"><img alt="手机打开" src="/static/code.png" width="200" /></div></div>-->
+    </div>
+
+
+
+<!--        <div class="layui-col-sm3">-->
+<!--            <div class="grid-demo grid-demo-bg1">25%</div>-->
+<!--        </div>-->
+
+
+</div>
+</div>
+
+    <script src="../static/layui/layui.js"></script>
+
+
+<!-- <script src="//www.layuicdn.com/layui-v2.5.5/layui.js"></script> -->
+
+
+<script>
+
+
+
+
+    //轮播图
+    // layui.use('carousel', function () {
+    //     var $ = layui.jquery;
+    //     var carousel = layui.carousel;
+    //     carousel.render({
+    //         elem: '#banner',
+    //
+    //         width: '100%', //设置容器宽度
+    //         height: '0px',
+    //         arrow: 'hover', //始终显示箭头
+    //         indicator: 'inside',
+    //         anim: 'fade' //切换动画方式
+    //     });
+
+
+    // 响应式轮播图
+    // window.onload = function () {
+    //
+    //     var bannerH = $('#banner img')[0].height;
+    //     $('.layui-carousel').css('height',bannerH+'px');
+    // }
+    // });
+
+   // 主体数据渲染
+    layui.use(['util','flow'], function (){
+        var $ = layui.jquery;
+
+        $("#top").load("./top.html");
+        $("#right").load("./right.html");
+
+        var type = layui.router().search.type||'';
+        var flow = layui.flow;
+        var util = layui.util;
+        flow.load({
+            elem: '#demo'
+            ,isAuto: false
+            ,isLazyimg: true
+            ,done: function(page, next){
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.get('/api/?page='+page+'&type='+type, function(res){
+                //     $.get('/api/?page='+page, function(res){
+                    //假设你的列表返回在data集合中
+                    layui.each(res.data, function(index, item){
+                        // lis.push('' +
+                        //     ' <a href="details.html#/note='+ item.id +'"><fieldset class="layui-elem-field"><legend>'+ item.title +'</legend><div class="layui-card-body layui-elip">'+ item.main +'  </div> </fieldset></a>'
+                        //
+                        // );
+                        lis.push('<li ng-repeat="b in list">\n' +
+                            '    <a href="details.html#/note='+ item.id +'"><div class="layui-card">                        <div class="" > <h2>'+item.title +'' +
+                            '                               </h2> <div class="blog-info" style="height: 25px;line-height: 17px">\n' +
+                            '                                    <span class="layui-badge">'+ item.type +'</span> </div>\n' +
+                            '                                <p class="layui-elip" style="height: max-content">'+item.main+' </p></div>\n' +
+                            '                       <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;"> <legend><span > '+item.time +'</span>      </legend></fieldset></a> </li>' )
+                        // lis.push('' +
+                        //     '<a href="details.html#/note='+ item.id +'"><div class="layui-card"> ' +
+                        //     '                <div class="layui-card-header layui-field-title"><h2>'+ item.title +'</h2><span class="layui-badge layui-layout-right">'+item.type+'</span></div>' +
+                        //     '                <div class="layui-card-body ">' +item.room+
+                        //     ' <br>'                + item.main +'<span class="layui-layout-right">'+item.time+'</span> </div></div></a>'
+
+
+                            // ' <div class="layui-col-md12 "><div class="layui-card"><div class="layui-card-header"><li class="layui-badge">'+ item.type +'</li>'+ item.title +'</div><div class="layui-card-body">'+ item.main +' </div>  </div> </div><hr class="layui-bg-gray">'
+                        // );
+
+                    });
+
+                    //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                    //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                    next(lis.join(''), page < res.count);
+                });
+            }
+        });
+        //右下角
+        util.fixbar({
+            bar1: '&#xe654;'
+            // bar2: true
+            ,css: {right: 20, bottom: 30 ,}
+            ,click: function(type){
+                if(type === 'bar1'){
+
+                    layui.use('layer', function(){
+                        var layer = layui.layer;
+                        // layer.msg('新的帖子');
+                        var index = layer.open({
+                            title: '新建帖子'
+                            ,type: 2,
+                            content: 'add.html#/note=1',
+                            // area: ['320px', '195px'],
+                            maxmin: true
+                        });
+                        layer.full(index);
+                    });
+
+
+                }
+            }
+
+    });
+    });
+</script>
+
+</body>
+</html>

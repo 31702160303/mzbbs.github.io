@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>帽子社区</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/layui/css/layui.css" />
+</head>
+
+<body>
+<div class="layui-fluid  " style="max-width:1170px">
+<form class="layui-form" action="" lay-filter="example">
+    <div class="layui-form-item">
+        <label class="layui-form-label">学号</label>
+        <div class="layui-input-block">
+            <input type="text" name="username" value="" lay-verify="title" autocomplete="off" placeholder="请输入学号" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" value="" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">分区</label>
+        <div class="layui-input-block">
+            <select name="found" lay-filter="aihao">
+                <option value=""></option>
+                <option value="0">招领</option>
+                <option value="1">寻物</option>
+                <option value="2">灌水</option>
+                <option value="3">站务</option>
+                <option value="4">玩乐</option>
+            </select>
+        </div>
+    </div>
+
+
+
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label">开关</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="checkbox" name="close" lay-skin="switch" lay-text="ON|OFF">-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label">单选框</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="radio" name="sex" value="男" title="男" checked="">-->
+<!--            <input type="radio" name="sex" value="女" title="女">-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" placeholder="请输入内容" class="layui-input" name="title" id="" maxlength="30">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+            <textarea placeholder="" class="layui-textarea" name="main" id="pattern" lay-verify="pattern" style="display:none"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn layui-btn-normal" id="LAY-component-form-setval">取消</button>
+
+            <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+        </div>
+    </div>
+</form>
+</div>
+<script src="../static/layui/layui.js"></script>
+<!-- <script src="//www.layuicdn.com/layui-v2.5.5/layui.js"></script> -->
+
+<script>
+                layui.use(['form', 'layedit', 'laydate'], function(){
+                    var $ = layui.jquery;
+                    var form = layui.form
+                        ,layer = layui.layer
+                        var layedit = layui.layedit;
+
+
+                    layedit.set({
+                        uploadImage: {
+                            url: '/api/index/upImg'
+                            ,type: ''
+                        }
+                    });
+//注意：layedit.set 一定要放在 build 前面，否则配置全局接口将无效。
+                    var index = layedit.build('pattern', {height: 140}); //建立编辑器
+
+
+// 打开窗口自动弹窗提示
+                    layer.open({
+                        type: 1
+                        ,title: false //不显示标题栏
+                        ,closeBtn: false
+                        ,area: '300px;'
+                        ,shade: 0.8
+                        ,id: 'LAY_layuiadd' //设定一个id，防止重复弹出
+                        ,resize: false
+                        // ,btn: ['查看规则', '我知道了']
+                        ,btn: '我知道了'
+                        ,btnAlign: 'c'
+                        ,moveType: 1 //拖拽模式，0或者1
+                        ,content: '<div style="padding: 20px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300;">帖子发表使用教务处账号和密码，请注意自己的言论是否恰当。新生账号需等待教务处分配</div>'
+                        ,success: function(layero){
+                            var btn = layero.find('.layui-layer-btn');
+                            btn.find('.layui-layer-btn0').attr({
+                                // href: '#',
+                                target: '_blank'
+                            });
+                        }
+                    });
+               
+         
+
+            //监听提交
+                    form.verify({
+                        pattern:function () {
+                            layedit.sync(index);
+                        }
+                    });
+                    form.render();
+                    // form.on('submit(demo1)', function(data){
+                    //     layer.alert(JSON.stringify(data.field), {
+                    //         title: '最终的提交信息'
+                    //     })
+                    //     return false;
+                    // });
+
+
+            form.on('submit(demo1)', function(data){
+                layer.msg('确定都填对了，提交会就返回', {
+                    time: 0 //不自动关闭
+                    ,btn: ['我确定  ', '再看看']
+                    ,yes: function(index){
+                        $.post('/api/index/add/',data.field,function(data){
+                            if(data.status){
+                                layer.msg(data.data, {icon:1,time:2000}, function(){
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    parent.location.reload(); //刷新父页面
+                                    parent.layer.close(index);
+                                });
+                            }else{
+
+                                {
+                                    // layer.alert(data.data, {icon: 5},function () {
+                                    //     var index = parent.layer.getFrameIndex(window.name);
+                                    //     parent.layer.close(index ,function () {
+                                    //
+                                    //         setTimeout('window.location.reload()',1000);
+                                    //     } )})
+
+                                    layer.msg(data.data, {icon:5,time:5000}, function(){
+                                        var index = parent.layer.getFrameIndex(window.name);
+                                        parent.location.reload(); //刷新父页面
+                                        parent.layer.close(index);
+                                    });
+
+
+
+
+                                }
+                                // var index = parent.layer.getFrameIndex(window.name);
+                                // parent.layer.close(index);
+
+
+                            }
+                        },'json');
+
+                    }
+                });
+
+
+
+
+            });
+
+            //表单赋值
+
+
+
+
+            });
+</script>
+</body>
+</html>
