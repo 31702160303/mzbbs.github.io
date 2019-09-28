@@ -14,7 +14,7 @@
             ,done: function(page, next){
                 var lis = [];
              
-                    $.get(url+'api/?page='+page+'&type='+type, function(res){
+                    $.get(url+'/api/?page='+page+'&type='+type, function(res){
                   
                     layui.each(res.data, function(index, item){
                   

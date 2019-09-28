@@ -39,7 +39,7 @@
                     ,shade: 0.01
                 });
 
-                $.get('/api/index/dele?id='+id+'&sno='+val, function(data) {    if(data.status) {
+                $.get(url+'/api/index/dele?id='+id+'&sno='+val, function(data) {    if(data.status) {
                      
                         layer.msg(data.data);
                     }else {
